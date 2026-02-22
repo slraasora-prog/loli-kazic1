@@ -4,112 +4,110 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Лоли Казик</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{
-  width:100%;min-height:100%;
-  background:#0a0a0f;color:#e8e8f0;
-  font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
-  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+html,body{width:100%;min-height:100%;background:#0a0a0f;color:#e8e8f0;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* Экран имени */
+#nameScreen{
+  position:fixed;inset:0;background:#0a0a0f;z-index:100;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;padding:32px;
 }
-.wrap{
-  display:flex;flex-direction:column;align-items:center;
-  padding:16px 16px 32px;max-width:420px;margin:0 auto;gap:14px;
+#nameScreen h2{font-size:22px;font-weight:900;text-align:center;background:linear-gradient(135deg,#FFD700,#FF2F7B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#nameScreen p{font-size:14px;color:#666688;text-align:center}
+#nameInput{
+  width:100%;max-width:300px;
+  background:#1a1a28;border:2px solid rgba(123,47,255,.4);border-radius:14px;
+  padding:14px 18px;font-size:16px;color:#fff;outline:none;
+  transition:border-color .2s;text-align:center;
+  -webkit-appearance:none;
 }
-h1{
-  font-size:22px;font-weight:900;letter-spacing:-0.5px;
-  text-align:center;line-height:1.2;
-  background:linear-gradient(135deg,#FFD700,#FFA500,#FF2F7B);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+#nameInput:focus{border-color:#7B2FFF}
+#nameInput::placeholder{color:#444466}
+#nameSubmit{
+  width:100%;max-width:300px;
+  background:linear-gradient(135deg,#7B2FFF,#FF2F7B);
+  border:none;border-radius:14px;padding:15px;
+  font-size:16px;font-weight:700;color:#fff;cursor:pointer;
+  box-shadow:0 4px 20px rgba(123,47,255,.4);
+  transition:transform .1s,opacity .2s;
+  -webkit-appearance:none;
 }
-.sub{font-size:11px;color:#555577;letter-spacing:.5px;text-align:center;margin-top:2px}
+#nameSubmit:active{transform:scale(.96)}
+#nameSubmit:disabled{opacity:.5}
+.name-logo{font-size:48px;line-height:1}
+
+/* Основной экран */
+.wrap{display:flex;flex-direction:column;align-items:center;padding:10px 14px 28px;max-width:420px;margin:0 auto;gap:10px}
+
+h1{font-size:20px;font-weight:900;letter-spacing:-.5px;text-align:center;line-height:1.2;background:linear-gradient(135deg,#FFD700,#FFA500,#FF2F7B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:11px;color:#555577;letter-spacing:.5px;text-align:center}
 
 /* Колесо */
-.wheel-wrap{
-  position:relative;
-  width:min(310px,90vw);height:min(310px,90vw);
-  flex-shrink:0;
-}
-#wcanvas{
-  width:100%;height:100%;
-  border-radius:50%;
-  display:block;
-  /* iOS fix */
-  -webkit-transform:translateZ(0);transform:translateZ(0);
-}
-.arrow{
-  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
-  width:0;height:0;
-  border-left:12px solid transparent;border-right:12px solid transparent;
-  border-top:24px solid #FFD700;
-  filter:drop-shadow(0 0 6px rgba(255,215,0,.9));z-index:5;
-}
-.spin-btn{
-  position:absolute;top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  width:66px;height:66px;border-radius:50%;
-  background:linear-gradient(135deg,#7B2FFF,#FF2F7B);
-  border:3px solid rgba(255,255,255,.25);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
-  cursor:pointer;z-index:10;
-  box-shadow:0 0 18px rgba(123,47,255,.7);
-  -webkit-appearance:none;appearance:none;
-  transition:transform .1s,opacity .2s;
-  user-select:none;-webkit-user-select:none;
-}
+.wheel-wrap{position:relative;width:min(290px,86vw);height:min(290px,86vw);flex-shrink:0}
+#wcanvas{width:100%;height:100%;border-radius:50%;display:block;-webkit-transform:translateZ(0);transform:translateZ(0)}
+.arrow{position:absolute;top:-13px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:22px solid #FFD700;filter:drop-shadow(0 0 6px rgba(255,215,0,.9));z-index:5}
+.spin-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#7B2FFF,#FF2F7B);border:3px solid rgba(255,255,255,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;z-index:10;box-shadow:0 0 18px rgba(123,47,255,.7);-webkit-appearance:none;appearance:none;transition:transform .1s,opacity .2s;user-select:none;-webkit-user-select:none}
 .spin-btn:active{transform:translate(-50%,-50%) scale(.9)}
 .spin-btn:disabled{opacity:.4;cursor:default}
-.spin-btn .ico{font-size:20px;line-height:1}
+.spin-btn .ico{font-size:19px;line-height:1}
 .spin-btn .lbl{font-size:8px;font-weight:700;color:#fff;letter-spacing:.5px}
 
-/* Кулдаун */
-.cd{font-size:12px;color:#555577;text-align:center;height:18px;font-weight:600}
+.cd{font-size:11px;color:#555577;text-align:center;height:16px;font-weight:600}
 .cd.on{color:#FFD700}
 
 /* Результат */
-.res{
-  width:100%;background:#12121a;
-  border:1px solid rgba(123,47,255,.35);border-radius:16px;
-  padding:14px 16px;min-height:66px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-}
+.res{width:100%;background:#12121a;border:1px solid rgba(123,47,255,.35);border-radius:14px;padding:12px 14px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .res .lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#555577}
-.res .txt{font-size:16px;font-weight:600;text-align:center;line-height:1.4}
-.res .txt.win{color:#FFD700;font-size:15px;font-weight:800}
+.res .txt{font-size:15px;font-weight:600;text-align:center;line-height:1.4}
+.res .txt.win{color:#FFD700;font-size:14px;font-weight:800}
 
 /* Счёт */
-.score{
-  width:100%;background:rgba(123,47,255,.12);
-  border:1px solid rgba(123,47,255,.3);border-radius:14px;
-  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
-}
+.score{width:100%;background:rgba(123,47,255,.12);border:1px solid rgba(123,47,255,.3);border-radius:13px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between}
 .score .lbl{font-size:10px;color:#555577;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
-.score .val{font-size:22px;font-weight:900;color:#FFD700}
-.score .rval{font-size:15px;font-weight:700;text-align:right}
+.score .val{font-size:20px;font-weight:900;color:#FFD700}
+.score .rval{font-size:14px;font-weight:700;text-align:right}
+
+/* Имя игрока */
+.player-bar{width:100%;background:#12121a;border:1px solid rgba(255,255,255,.07);border-radius:13px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.player-bar .pname{font-size:13px;font-weight:600;color:#e8e8f0}
+.player-bar .change{font-size:11px;color:#7B2FFF;cursor:pointer;text-decoration:underline}
 
 /* Топ */
 .top{width:100%}
-.top h2{font-size:13px;font-weight:800;margin-bottom:10px}
-.top-list{display:flex;flex-direction:column;gap:6px}
-.ti{
-  display:flex;align-items:center;gap:10px;
-  background:#12121a;border:1px solid rgba(255,255,255,.07);
-  border-radius:12px;padding:10px 14px;
-}
+.top h2{font-size:13px;font-weight:800;margin-bottom:8px}
+.top-list{display:flex;flex-direction:column;gap:5px}
+.ti{display:flex;align-items:center;gap:10px;background:#12121a;border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:9px 13px}
 .ti.me{border-color:rgba(123,47,255,.5);background:rgba(123,47,255,.1)}
 .ti .rk{font-size:13px;font-weight:800;width:26px;text-align:center;flex-shrink:0}
 .ti .nm{flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ti .sc{font-size:12px;font-weight:800;color:#FFD700;flex-shrink:0}
-.empty{text-align:center;color:#555577;font-size:13px;padding:16px}
+.empty{text-align:center;color:#555577;font-size:13px;padding:14px}
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<!-- Экран ввода имени -->
+<div id="nameScreen">
+  <div class="name-logo">🎰</div>
+  <h2>ЛОЛИ КАЗИК</h2>
+  <p>Введи своё имя чтобы участвовать в таблице лидеров</p>
+  <input id="nameInput" type="text" placeholder="Твоё имя..." maxlength="20" autocomplete="off">
+  <button id="nameSubmit" onclick="submitName()">Играть 🎯</button>
+</div>
+
+<!-- Основной экран -->
+<div class="wrap" id="mainScreen" style="display:none">
   <div>
     <h1>🎰 ЛОЛИ КАЗИК</h1>
     <div class="sub">крути — побеждай — соревнуйся</div>
+  </div>
+
+  <div class="player-bar">
+    <div>👤 <span class="pname" id="playerName">—</span></div>
+    <span class="change" onclick="changeName()">сменить имя</span>
   </div>
 
   <div class="wheel-wrap">
@@ -139,39 +137,93 @@ h1{
 </div>
 
 <script>
-// ── Telegram ────────────────────────────────────────────────────────────
 const TG = window.Telegram?.WebApp;
 if(TG){TG.ready();TG.expand()}
-const UID = String(TG?.initDataUnsafe?.user?.id || 'local_'+Math.random().toString(36).slice(2,8));
-const UNAME = TG?.initDataUnsafe?.user?.first_name || 'Гость';
+const TG_UID = String(TG?.initDataUnsafe?.user?.id || '');
+const TG_NAME = TG?.initDataUnsafe?.user?.first_name || '';
 
-// ── Сегменты ────────────────────────────────────────────────────────────
+// ── Имя игрока ────────────────────────────────────────────────────────────
+let UID = '', UNAME = '';
+
+function getStoredName(){
+  try{return localStorage.getItem('kazik_name_'+TG_UID)||''}catch{return''}
+}
+function setStoredName(n){
+  try{localStorage.setItem('kazik_name_'+TG_UID,n)}catch{}
+}
+
+function initUser(){
+  const stored = getStoredName();
+  if(stored){
+    UNAME = stored;
+    UID = TG_UID || 'local_'+stored;
+    showMain();
+  } else {
+    // Предзаполняем именем из Telegram если есть
+    if(TG_NAME) document.getElementById('nameInput').value = TG_NAME;
+    document.getElementById('nameScreen').style.display = 'flex';
+  }
+}
+
+function submitName(){
+  const inp = document.getElementById('nameInput');
+  const name = inp.value.trim();
+  if(!name){inp.style.borderColor='#FF2F7B';setTimeout(()=>inp.style.borderColor='',800);return}
+  UNAME = name;
+  UID = TG_UID || 'local_'+name+'_'+Math.random().toString(36).slice(2,8);
+  setStoredName(name);
+  document.getElementById('nameScreen').style.display = 'none';
+  showMain();
+}
+
+function changeName(){
+  document.getElementById('nameInput').value = UNAME;
+  document.getElementById('nameScreen').style.display = 'flex';
+}
+
+function showMain(){
+  document.getElementById('mainScreen').style.display = 'flex';
+  document.getElementById('playerName').textContent = UNAME;
+  resize();
+  loadMe().then(()=>{updCD();renderLB()});
+}
+
+// Enter в поле имени
+document.getElementById('nameInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') submitName();
+});
+
+// ── Сегменты ──────────────────────────────────────────────────────────────
 const SEG = [
-  {t:'ДЖЕКПОТ', e:'💎', p:1000, c:'#6020D0', rare:true},
-  {t:'Оружие',  e:'⚔',  p:200,  c:'#C0185A'},
-  {t:'Золото',  e:'🪙',  p:150,  c:'#C88000'},
-  {t:'Ничего',  e:'💀',  p:0,    c:'#181828'},
-  {t:'Зелье',   e:'🧪',  p:100,  c:'#10A060'},
-  {t:'Огонь',   e:'🔥',  p:50,   c:'#C04010'},
-  {t:'Ничего',  e:'💀',  p:0,    c:'#181828'},
-  {t:'Щит',     e:'🛡',  p:120,  c:'#1050C0'},
-  {t:'Звезда',  e:'⭐',  p:300,  c:'#C09000'},
-  {t:'Ничего',  e:'💀',  p:0,    c:'#181828'},
-  {t:'Меч',     e:'🗡',  p:80,   c:'#A01840'},
-  {t:'Магия',   e:'🪄',  p:250,  c:'#8010C0'},
+  {t:'ДЖЕКПОТ', e:'💎', p:1000, c:'#6020D0', w:0.5},
+  {t:'Оружие',  e:'⚔',  p:200,  c:'#C0185A', w:2},
+  {t:'Золото',  e:'🪙',  p:150,  c:'#C88000', w:2},
+  {t:'Ничего',  e:'💀',  p:0,    c:'#181828', w:1.5},
+  {t:'Зелье',   e:'🧪',  p:100,  c:'#10A060', w:2.5},
+  {t:'Огонь',   e:'🔥',  p:50,   c:'#C04010', w:3},
+  {t:'Ничего',  e:'💀',  p:0,    c:'#181828', w:1.5},
+  {t:'Щит',     e:'🛡',  p:120,  c:'#1050C0', w:2.5},
+  {t:'Звезда',  e:'⭐',  p:300,  c:'#C09000', w:1.5},
+  {t:'Ничего',  e:'💀',  p:0,    c:'#181828', w:1.5},
+  {t:'Меч',     e:'🗡',  p:80,   c:'#A01840', w:2.5},
+  {t:'Магия',   e:'🪄',  p:250,  c:'#8010C0', w:1.5},
 ];
 const N=SEG.length, ARC=2*Math.PI/N, COOL=5000;
 
-// ── Canvas ──────────────────────────────────────────────────────────────
-const cv = document.getElementById('wcanvas');
-const ctx = cv.getContext('2d');
+// ── Canvas ────────────────────────────────────────────────────────────────
+const cv=document.getElementById('wcanvas');
+const ctx=cv.getContext('2d');
+let canvasSize=300;
 
 function resize(){
-  const sz = cv.parentElement.offsetWidth;
-  const dpr = Math.min(window.devicePixelRatio||1, 2); // iOS fix: cap at 2x
-  cv.width = sz * dpr;
-  cv.height = sz * dpr;
-  ctx.scale(dpr, dpr);
+  const el=cv.parentElement;
+  if(!el||el.offsetWidth===0)return;
+  const sz=el.offsetWidth;
+  canvasSize=sz;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.width=sz*dpr;cv.height=sz*dpr;
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.scale(dpr,dpr);
   draw(rot);
 }
 
@@ -181,94 +233,63 @@ function lighten(hex,a){
 }
 
 function draw(angle){
-  const sz = cv.width/(Math.min(window.devicePixelRatio||1,2));
-  const cx=sz/2, cy=sz/2, R=sz/2-6;
+  const sz=canvasSize;
+  const cx=sz/2,cy=sz/2,R=sz/2-5;
   ctx.clearRect(0,0,sz,sz);
 
   for(let i=0;i<N;i++){
     const s=SEG[i];
-    const a0=angle+i*ARC, a1=a0+ARC;
-
-    // Сектор
-    ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,R,a0,a1);
-    ctx.closePath();
-    const gr=ctx.createRadialGradient(cx,cy,R*.2,cx,cy,R);
-    gr.addColorStop(0,lighten(s.c,50));
-    gr.addColorStop(1,s.c);
+    const a0=angle+i*ARC,a1=a0+ARC;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0,a1);ctx.closePath();
+    const gr=ctx.createRadialGradient(cx,cy,R*.15,cx,cy,R);
+    gr.addColorStop(0,lighten(s.c,55));gr.addColorStop(1,s.c);
     ctx.fillStyle=gr;ctx.fill();
     ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=1.5;ctx.stroke();
 
-    // Текст
     const mid=angle+i*ARC+ARC/2;
-    ctx.save();
-    ctx.translate(cx,cy);
-    ctx.rotate(mid);
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(mid);
     ctx.textAlign='center';ctx.textBaseline='middle';
-
-    // Тень
     ctx.shadowColor='rgba(0,0,0,.95)';ctx.shadowBlur=5;
-
-    // Название
     ctx.fillStyle='#fff';
-    ctx.font=`bold ${sz<280?9:11}px -apple-system,Arial,sans-serif`;
-    ctx.fillText(s.t, R*.60, -5);
-
-    // Очки
-    if(s.p>0){
-      ctx.fillStyle='#FFE000';
-      ctx.font=`bold ${sz<280?8:10}px -apple-system,Arial,sans-serif`;
-      ctx.fillText('+'+s.p, R*.60, 8);
-    }
-
-    // Эмодзи
-    ctx.shadowBlur=0;
-    ctx.font=`${sz<280?12:14}px -apple-system,Arial,sans-serif`;
-    ctx.fillStyle='#fff';
-    ctx.fillText(s.e, R*.28, 1);
-
+    ctx.font=`bold ${sz<260?9:11}px -apple-system,Arial,sans-serif`;
+    ctx.fillText(s.t,R*.60,-5);
+    if(s.p>0){ctx.fillStyle='#FFE000';ctx.font=`bold ${sz<260?8:10}px -apple-system,Arial,sans-serif`;ctx.fillText('+'+s.p,R*.60,8)}
+    ctx.shadowBlur=0;ctx.font=`${sz<260?11:13}px -apple-system,Arial,sans-serif`;ctx.fillStyle='#fff';ctx.fillText(s.e,R*.27,1);
     ctx.restore();
   }
 
   // Рамка
-  ctx.beginPath();ctx.arc(cx,cy,R+3,0,2*Math.PI);
+  ctx.beginPath();ctx.arc(cx,cy,R+2,0,2*Math.PI);
   const bg=ctx.createLinearGradient(0,0,sz,sz);
   bg.addColorStop(0,'#7B2FFF');bg.addColorStop(.5,'#FFD700');bg.addColorStop(1,'#FF2F7B');
   ctx.strokeStyle=bg;ctx.lineWidth=4;ctx.stroke();
 
   // Центр
-  ctx.beginPath();ctx.arc(cx,cy,36,0,2*Math.PI);
+  ctx.beginPath();ctx.arc(cx,cy,34,0,2*Math.PI);
   ctx.fillStyle='#0a0a0f';ctx.fill();
   ctx.strokeStyle='rgba(123,47,255,.6)';ctx.lineWidth=2;ctx.stroke();
 }
 
-// ── Хранилище (localStorage fallback если window.storage нет) ───────────
+// ── Хранилище ─────────────────────────────────────────────────────────────
 async function sGet(k,shared=false){
-  try{
-    if(window.storage){const r=await window.storage.get(k,shared);return r?JSON.parse(r.value):null}
-    else{const v=localStorage.getItem(k);return v?JSON.parse(v):null}
-  }catch{return null}
+  try{if(window.storage){const r=await window.storage.get(k,shared);return r?JSON.parse(r.value):null}else{const v=localStorage.getItem(k);return v?JSON.parse(v):null}}catch{return null}
 }
 async function sSet(k,v,shared=false){
-  try{
-    if(window.storage) await window.storage.set(k,JSON.stringify(v),shared);
-    else localStorage.setItem(k,JSON.stringify(v));
-  }catch{}
+  try{if(window.storage)await window.storage.set(k,JSON.stringify(v),shared);else localStorage.setItem(k,JSON.stringify(v))}catch{}
 }
 
-// ── Данные игрока ────────────────────────────────────────────────────────
+// ── Данные игрока ─────────────────────────────────────────────────────────
 let me={score:0,spins:0,lastSpin:0,lastPrize:''};
-async function loadMe(){me=(await sGet('wm_'+UID))||me;updUI()}
-async function saveMe(){await sSet('wm_'+UID,me)}
+async function loadMe(){const d=await sGet('wm2_'+UID);if(d)me=d;updUI()}
+async function saveMe(){await sSet('wm2_'+UID,me)}
 function updUI(){
   document.getElementById('myScore').textContent=me.score.toLocaleString();
   document.getElementById('mySpins').textContent=me.spins;
 }
 
-// ── Лидерборд ────────────────────────────────────────────────────────────
-async function getLB(){return(await sGet('wlb2',true))||{}}
-async function setLB(lb){await sSet('wlb2',lb,true)}
+// ── Лидерборд ─────────────────────────────────────────────────────────────
+async function getLB(){return(await sGet('wlb3',true))||{}}
+async function setLB(lb){await sSet('wlb3',lb,true)}
 async function renderLB(){
   const lb=await getLB();
   const sorted=Object.entries(lb).map(([id,d])=>({id,...d})).sort((a,b)=>b.score-a.score).slice(0,10);
@@ -284,7 +305,7 @@ async function renderLB(){
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
-// ── Кулдаун ──────────────────────────────────────────────────────────────
+// ── Кулдаун ───────────────────────────────────────────────────────────────
 function canSpin(){return Date.now()-me.lastSpin>=COOL}
 function updCD(){
   const el=document.getElementById('cd'),btn=document.getElementById('spinBtn');
@@ -293,7 +314,7 @@ function updCD(){
   el.textContent=`⏳ подожди ${l}с`;el.className='cd on';btn.disabled=true;
 }
 
-// ── Спин ─────────────────────────────────────────────────────────────────
+// ── Спин ──────────────────────────────────────────────────────────────────
 let rot=0,spinning=false;
 
 function doSpin(){
@@ -303,27 +324,29 @@ function doSpin(){
   document.getElementById('resText').textContent='🎲 Крутится...';
   document.getElementById('resText').className='txt';
 
-  // Выбор призa
-  const w=SEG.map(s=>s.rare?.3:(s.p===0?2.5:1));
-  const tot=w.reduce((a,b)=>a+b,0);
+  // Взвешенный выбор (повышенные шансы на хорошие призы)
+  const tot=SEG.reduce((a,s)=>a+s.w,0);
   let r=Math.random()*tot,winner=0;
-  for(let i=0;i<N;i++){r-=w[i];if(r<=0){winner=i;break}}
+  for(let i=0;i<N;i++){r-=SEG[i].w;if(r<=0){winner=i;break}}
 
-  // Целевой угол: середина сегмента winner → под стрелку (вверх = -π/2)
-  const extra=(4+Math.floor(Math.random()*3))*2*Math.PI;
-  // Стрелка сверху = угол -π/2 на единичной окружности
+  // Долгое замедляющее вращение
+  const extra=(6+Math.floor(Math.random()*4))*2*Math.PI; // 6-9 оборотов
   const arrowAngle=-Math.PI/2;
   const segMid=winner*ARC+ARC/2;
-  // Нужно чтобы: rot_final + segMid = arrowAngle + 2πk
   const base=arrowAngle-segMid;
   const diff=((base-rot)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
   const target=rot+extra+diff;
 
-  const dur=3600+Math.random()*800;
-  const t0=performance.now();
-  const r0=rot;
+  const dur=5500+Math.random()*1500; // 5.5-7 секунд
+  const t0=performance.now(),r0=rot;
 
-  function ease(t){return 1-Math.pow(1-t,4)}
+  function ease(t){
+    // Медленный старт, быстрая середина, очень долгое замедление
+    if(t<0.1) return t*t*5;
+    if(t<0.7) return 0.05+0.85*(t-0.1)/0.6;
+    return 0.9+(0.1*(1-Math.pow((1-t)/0.3,2)));
+  }
+
   function frame(now){
     const t=Math.min((now-t0)/dur,1);
     rot=r0+(target-r0)*ease(t);
@@ -359,11 +382,9 @@ async function finish(winner){
   updCD();
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────
-window.addEventListener('resize',resize);
-resize();
-loadMe().then(()=>{updCD();if(!canSpin()){const iv=setInterval(()=>{updCD();if(canSpin())clearInterval(iv)},500)}});
-renderLB();
+// ── Init ──────────────────────────────────────────────────────────────────
+window.addEventListener('resize',()=>{if(document.getElementById('mainScreen').style.display!=='none')resize()});
+initUser();
 </script>
 </body>
 </html>
