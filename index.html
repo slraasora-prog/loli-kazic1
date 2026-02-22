@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Лоли Казик</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{
+  width:100%;min-height:100%;
+  background:#0a0a0f;color:#e8e8f0;
+  font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+.wrap{
+  display:flex;flex-direction:column;align-items:center;
+  padding:16px 16px 32px;max-width:420px;margin:0 auto;gap:14px;
+}
+h1{
+  font-size:22px;font-weight:900;letter-spacing:-0.5px;
+  text-align:center;line-height:1.2;
+  background:linear-gradient(135deg,#FFD700,#FFA500,#FF2F7B);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sub{font-size:11px;color:#555577;letter-spacing:.5px;text-align:center;margin-top:2px}
+
+/* Колесо */
+.wheel-wrap{
+  position:relative;
+  width:min(310px,90vw);height:min(310px,90vw);
+  flex-shrink:0;
+}
+#wcanvas{
+  width:100%;height:100%;
+  border-radius:50%;
+  display:block;
+  /* iOS fix */
+  -webkit-transform:translateZ(0);transform:translateZ(0);
+}
+.arrow{
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  width:0;height:0;
+  border-left:12px solid transparent;border-right:12px solid transparent;
+  border-top:24px solid #FFD700;
+  filter:drop-shadow(0 0 6px rgba(255,215,0,.9));z-index:5;
+}
+.spin-btn{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:66px;height:66px;border-radius:50%;
+  background:linear-gradient(135deg,#7B2FFF,#FF2F7B);
+  border:3px solid rgba(255,255,255,.25);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  cursor:pointer;z-index:10;
+  box-shadow:0 0 18px rgba(123,47,255,.7);
+  -webkit-appearance:none;appearance:none;
+  transition:transform .1s,opacity .2s;
+  user-select:none;-webkit-user-select:none;
+}
+.spin-btn:active{transform:translate(-50%,-50%) scale(.9)}
+.spin-btn:disabled{opacity:.4;cursor:default}
+.spin-btn .ico{font-size:20px;line-height:1}
+.spin-btn .lbl{font-size:8px;font-weight:700;color:#fff;letter-spacing:.5px}
+
+/* Кулдаун */
+.cd{font-size:12px;color:#555577;text-align:center;height:18px;font-weight:600}
+.cd.on{color:#FFD700}
+
+/* Результат */
+.res{
+  width:100%;background:#12121a;
+  border:1px solid rgba(123,47,255,.35);border-radius:16px;
+  padding:14px 16px;min-height:66px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+}
+.res .lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#555577}
+.res .txt{font-size:16px;font-weight:600;text-align:center;line-height:1.4}
+.res .txt.win{color:#FFD700;font-size:15px;font-weight:800}
+
+/* Счёт */
+.score{
+  width:100%;background:rgba(123,47,255,.12);
+  border:1px solid rgba(123,47,255,.3);border-radius:14px;
+  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
+}
+.score .lbl{font-size:10px;color:#555577;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.score .val{font-size:22px;font-weight:900;color:#FFD700}
+.score .rval{font-size:15px;font-weight:700;text-align:right}
+
+/* Топ */
+.top{width:100%}
+.top h2{font-size:13px;font-weight:800;margin-bottom:10px}
+.top-list{display:flex;flex-direction:column;gap:6px}
+.ti{
+  display:flex;align-items:center;gap:10px;
+  background:#12121a;border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:10px 14px;
+}
+.ti.me{border-color:rgba(123,47,255,.5);background:rgba(123,47,255,.1)}
+.ti .rk{font-size:13px;font-weight:800;width:26px;text-align:center;flex-shrink:0}
+.ti .nm{flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ti .sc{font-size:12px;font-weight:800;color:#FFD700;flex-shrink:0}
+.empty{text-align:center;color:#555577;font-size:13px;padding:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h1>🎰 ЛОЛИ КАЗИК</h1>
+    <div class="sub">крути — побеждай — соревнуйся</div>
+  </div>
+
+  <div class="wheel-wrap">
+    <div class="arrow"></div>
+    <canvas id="wcanvas"></canvas>
+    <button class="spin-btn" id="spinBtn" onclick="doSpin()">
+      <span class="ico">🎯</span><span class="lbl">КРУТИ</span>
+    </button>
+  </div>
+
+  <div class="cd" id="cd"></div>
+
+  <div class="res">
+    <div class="lbl">твой приз</div>
+    <div class="txt" id="resText">Нажми КРУТИ!</div>
+  </div>
+
+  <div class="score">
+    <div><div class="lbl">мои очки</div><div class="val" id="myScore">0</div></div>
+    <div><div class="lbl" style="text-align:right">кручений</div><div class="rval" id="mySpins">0</div></div>
+  </div>
+
+  <div class="top">
+    <h2>🏆 Таблица лидеров</h2>
+    <div class="top-list" id="topList"><div class="empty">Будь первым!</div></div>
+  </div>
+</div>
+
+<script>
+// ── Telegram ────────────────────────────────────────────────────────────
+const TG = window.Telegram?.WebApp;
+if(TG){TG.ready();TG.expand()}
+const UID = String(TG?.initDataUnsafe?.user?.id || 'local_'+Math.random().toString(36).slice(2,8));
+const UNAME = TG?.initDataUnsafe?.user?.first_name || 'Гость';
+
+// ── Сегменты ────────────────────────────────────────────────────────────
+const SEG = [
+  {t:'ДЖЕКПОТ', e:'💎', p:1000, c:'#6020D0', rare:true},
+  {t:'Оружие',  e:'⚔',  p:200,  c:'#C0185A'},
+  {t:'Золото',  e:'🪙',  p:150,  c:'#C88000'},
+  {t:'Ничего',  e:'💀',  p:0,    c:'#181828'},
+  {t:'Зелье',   e:'🧪',  p:100,  c:'#10A060'},
+  {t:'Огонь',   e:'🔥',  p:50,   c:'#C04010'},
+  {t:'Ничего',  e:'💀',  p:0,    c:'#181828'},
+  {t:'Щит',     e:'🛡',  p:120,  c:'#1050C0'},
+  {t:'Звезда',  e:'⭐',  p:300,  c:'#C09000'},
+  {t:'Ничего',  e:'💀',  p:0,    c:'#181828'},
+  {t:'Меч',     e:'🗡',  p:80,   c:'#A01840'},
+  {t:'Магия',   e:'🪄',  p:250,  c:'#8010C0'},
+];
+const N=SEG.length, ARC=2*Math.PI/N, COOL=5000;
+
+// ── Canvas ──────────────────────────────────────────────────────────────
+const cv = document.getElementById('wcanvas');
+const ctx = cv.getContext('2d');
+
+function resize(){
+  const sz = cv.parentElement.offsetWidth;
+  const dpr = Math.min(window.devicePixelRatio||1, 2); // iOS fix: cap at 2x
+  cv.width = sz * dpr;
+  cv.height = sz * dpr;
+  ctx.scale(dpr, dpr);
+  draw(rot);
+}
+
+function lighten(hex,a){
+  const n=parseInt(hex.slice(1),16);
+  return `rgb(${Math.min(255,(n>>16)+a)},${Math.min(255,((n>>8)&0xff)+a)},${Math.min(255,(n&0xff)+a)})`;
+}
+
+function draw(angle){
+  const sz = cv.width/(Math.min(window.devicePixelRatio||1,2));
+  const cx=sz/2, cy=sz/2, R=sz/2-6;
+  ctx.clearRect(0,0,sz,sz);
+
+  for(let i=0;i<N;i++){
+    const s=SEG[i];
+    const a0=angle+i*ARC, a1=a0+ARC;
+
+    // Сектор
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,R,a0,a1);
+    ctx.closePath();
+    const gr=ctx.createRadialGradient(cx,cy,R*.2,cx,cy,R);
+    gr.addColorStop(0,lighten(s.c,50));
+    gr.addColorStop(1,s.c);
+    ctx.fillStyle=gr;ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=1.5;ctx.stroke();
+
+    // Текст
+    const mid=angle+i*ARC+ARC/2;
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(mid);
+    ctx.textAlign='center';ctx.textBaseline='middle';
+
+    // Тень
+    ctx.shadowColor='rgba(0,0,0,.95)';ctx.shadowBlur=5;
+
+    // Название
+    ctx.fillStyle='#fff';
+    ctx.font=`bold ${sz<280?9:11}px -apple-system,Arial,sans-serif`;
+    ctx.fillText(s.t, R*.60, -5);
+
+    // Очки
+    if(s.p>0){
+      ctx.fillStyle='#FFE000';
+      ctx.font=`bold ${sz<280?8:10}px -apple-system,Arial,sans-serif`;
+      ctx.fillText('+'+s.p, R*.60, 8);
+    }
+
+    // Эмодзи
+    ctx.shadowBlur=0;
+    ctx.font=`${sz<280?12:14}px -apple-system,Arial,sans-serif`;
+    ctx.fillStyle='#fff';
+    ctx.fillText(s.e, R*.28, 1);
+
+    ctx.restore();
+  }
+
+  // Рамка
+  ctx.beginPath();ctx.arc(cx,cy,R+3,0,2*Math.PI);
+  const bg=ctx.createLinearGradient(0,0,sz,sz);
+  bg.addColorStop(0,'#7B2FFF');bg.addColorStop(.5,'#FFD700');bg.addColorStop(1,'#FF2F7B');
+  ctx.strokeStyle=bg;ctx.lineWidth=4;ctx.stroke();
+
+  // Центр
+  ctx.beginPath();ctx.arc(cx,cy,36,0,2*Math.PI);
+  ctx.fillStyle='#0a0a0f';ctx.fill();
+  ctx.strokeStyle='rgba(123,47,255,.6)';ctx.lineWidth=2;ctx.stroke();
+}
+
+// ── Хранилище (localStorage fallback если window.storage нет) ───────────
+async function sGet(k,shared=false){
+  try{
+    if(window.storage){const r=await window.storage.get(k,shared);return r?JSON.parse(r.value):null}
+    else{const v=localStorage.getItem(k);return v?JSON.parse(v):null}
+  }catch{return null}
+}
+async function sSet(k,v,shared=false){
+  try{
+    if(window.storage) await window.storage.set(k,JSON.stringify(v),shared);
+    else localStorage.setItem(k,JSON.stringify(v));
+  }catch{}
+}
+
+// ── Данные игрока ────────────────────────────────────────────────────────
+let me={score:0,spins:0,lastSpin:0,lastPrize:''};
+async function loadMe(){me=(await sGet('wm_'+UID))||me;updUI()}
+async function saveMe(){await sSet('wm_'+UID,me)}
+function updUI(){
+  document.getElementById('myScore').textContent=me.score.toLocaleString();
+  document.getElementById('mySpins').textContent=me.spins;
+}
+
+// ── Лидерборд ────────────────────────────────────────────────────────────
+async function getLB(){return(await sGet('wlb2',true))||{}}
+async function setLB(lb){await sSet('wlb2',lb,true)}
+async function renderLB(){
+  const lb=await getLB();
+  const sorted=Object.entries(lb).map(([id,d])=>({id,...d})).sort((a,b)=>b.score-a.score).slice(0,10);
+  const el=document.getElementById('topList');
+  if(!sorted.length){el.innerHTML='<div class="empty">Будь первым!</div>';return}
+  const em=['🥇','🥈','🥉'];
+  el.innerHTML=sorted.map((p,i)=>`
+    <div class="ti${p.id===UID?' me':''}">
+      <div class="rk">${em[i]||i+1}</div>
+      <div class="nm">${esc(p.name)}${p.id===UID?' 👈':''}</div>
+      <div class="sc">${p.score.toLocaleString()}</div>
+    </div>`).join('');
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// ── Кулдаун ──────────────────────────────────────────────────────────────
+function canSpin(){return Date.now()-me.lastSpin>=COOL}
+function updCD(){
+  const el=document.getElementById('cd'),btn=document.getElementById('spinBtn');
+  if(canSpin()){el.textContent='';el.className='cd';btn.disabled=false;return}
+  const l=Math.ceil((COOL-(Date.now()-me.lastSpin))/1000);
+  el.textContent=`⏳ подожди ${l}с`;el.className='cd on';btn.disabled=true;
+}
+
+// ── Спин ─────────────────────────────────────────────────────────────────
+let rot=0,spinning=false;
+
+function doSpin(){
+  if(spinning||!canSpin())return;
+  spinning=true;
+  document.getElementById('spinBtn').disabled=true;
+  document.getElementById('resText').textContent='🎲 Крутится...';
+  document.getElementById('resText').className='txt';
+
+  // Выбор призa
+  const w=SEG.map(s=>s.rare?.3:(s.p===0?2.5:1));
+  const tot=w.reduce((a,b)=>a+b,0);
+  let r=Math.random()*tot,winner=0;
+  for(let i=0;i<N;i++){r-=w[i];if(r<=0){winner=i;break}}
+
+  // Целевой угол: середина сегмента winner → под стрелку (вверх = -π/2)
+  const extra=(4+Math.floor(Math.random()*3))*2*Math.PI;
+  // Стрелка сверху = угол -π/2 на единичной окружности
+  const arrowAngle=-Math.PI/2;
+  const segMid=winner*ARC+ARC/2;
+  // Нужно чтобы: rot_final + segMid = arrowAngle + 2πk
+  const base=arrowAngle-segMid;
+  const diff=((base-rot)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+  const target=rot+extra+diff;
+
+  const dur=3600+Math.random()*800;
+  const t0=performance.now();
+  const r0=rot;
+
+  function ease(t){return 1-Math.pow(1-t,4)}
+  function frame(now){
+    const t=Math.min((now-t0)/dur,1);
+    rot=r0+(target-r0)*ease(t);
+    draw(rot);
+    if(t<1){requestAnimationFrame(frame)}
+    else{rot=rot%(2*Math.PI);draw(rot);finish(winner)}
+  }
+  requestAnimationFrame(frame);
+}
+
+async function finish(winner){
+  spinning=false;
+  const s=SEG[winner];
+  me.score+=s.p;me.spins++;me.lastSpin=Date.now();me.lastPrize=s.e+' '+s.t;
+  await saveMe();
+
+  const lb=await getLB();
+  lb[UID]={name:UNAME,score:me.score,spins:me.spins,lastPrize:me.lastPrize};
+  await setLB(lb);
+
+  const rt=document.getElementById('resText');
+  if(s.p>0){
+    rt.innerHTML=`${s.e} <strong>${s.t}</strong> +${s.p} очков`;
+    rt.className='txt win';
+    TG?.HapticFeedback?.impactOccurred?.('heavy');
+  }else{
+    rt.textContent='💀 Ничего... ещё раз!';
+    rt.className='txt';
+    TG?.HapticFeedback?.notificationOccurred?.('error');
+  }
+  updUI();await renderLB();
+  const iv=setInterval(()=>{updCD();if(canSpin())clearInterval(iv)},500);
+  updCD();
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────
+window.addEventListener('resize',resize);
+resize();
+loadMe().then(()=>{updCD();if(!canSpin()){const iv=setInterval(()=>{updCD();if(canSpin())clearInterval(iv)},500)}});
+renderLB();
+</script>
+</body>
+</html>
