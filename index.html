@@ -127,14 +127,31 @@ const TG_NAME = TG?.initDataUnsafe?.user?.first_name || '';
 let UID = '', UNAME = '';
 
 // Ключи хранилища
-const KEY_NAME = 'kazik_name_v2';
-const KEY_UID  = 'kazik_uid_v2';
+const KEY_NAME = 'kazik_name_v3';
+const KEY_UID  = 'kazik_uid_v3';
 
-function lsGet(k){try{return localStorage.getItem(k)||''}catch{return''}}
-function lsSet(k,v){try{localStorage.setItem(k,v)}catch{}}
+// Универсальное хранилище: window.storage (Telegram) → localStorage → sessionStorage
+function lsGet(k){
+  try{if(localStorage.getItem(k))return localStorage.getItem(k)}catch{}
+  try{if(sessionStorage.getItem(k))return sessionStorage.getItem(k)}catch{}
+  return '';
+}
+function lsSet(k,v){
+  try{localStorage.setItem(k,v)}catch{}
+  try{sessionStorage.setItem(k,v)}catch{}
+}
 
-function initUser(){
-  // Восстанавливаем UID
+// window.storage (Telegram Mini App) — асинхронное
+async function wsGet(k){
+  try{if(window.storage){const r=await window.storage.get(k);return r?r.value:null}}catch{}
+  return null;
+}
+async function wsSet(k,v){
+  try{if(window.storage)await window.storage.set(k,v)}catch{}
+}
+
+async function initUser(){
+  // UID
   if(TG_UID){
     UID = TG_UID;
   } else {
@@ -142,24 +159,32 @@ function initUser(){
     lsSet(KEY_UID, UID);
   }
 
-  // Восстанавливаем имя
-  const savedName = lsGet(KEY_NAME+'_'+UID);
+  // Ищем имя: сначала window.storage (Telegram), потом localStorage
+  let savedName = await wsGet('kazik_name_'+UID);
+  if(!savedName) savedName = lsGet(KEY_NAME+'_'+UID);
+
   if(savedName){
     UNAME = savedName;
     showMain();
+  } else if(TG_NAME){
+    // Если есть имя из Telegram — сохраняем сразу без вопроса
+    UNAME = TG_NAME;
+    await wsSet('kazik_name_'+UID, UNAME);
+    lsSet(KEY_NAME+'_'+UID, UNAME);
+    showMain();
   } else {
-    // Предзаполняем из Telegram
-    if(TG_NAME) document.getElementById('nameInput').value = TG_NAME;
     document.getElementById('nameScreen').style.display = 'flex';
   }
 }
 
-function submitName(){
+async function submitName(){
   const inp = document.getElementById('nameInput');
   const name = inp.value.trim().slice(0,20);
   if(!name){inp.style.borderColor='#FF2F7B';setTimeout(()=>inp.style.borderColor='rgba(123,47,255,.4)',700);return}
   UNAME = name;
-  lsSet(KEY_NAME+'_'+UID, name);
+  // Сохраняем везде
+  await wsSet('kazik_name_'+UID, UNAME);
+  lsSet(KEY_NAME+'_'+UID, UNAME);
   document.getElementById('nameScreen').style.display = 'none';
   showMain();
 }
