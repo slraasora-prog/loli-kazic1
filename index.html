@@ -8,23 +8,17 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;min-height:100%;background:#0a0a0f;color:#e8e8f0;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-
-/* Экран имени */
 #nameScreen{position:fixed;inset:0;background:#0a0a0f;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px}
 #nameScreen h2{font-size:24px;font-weight:900;text-align:center;background:linear-gradient(135deg,#FFD700,#FF2F7B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 #nameScreen p{font-size:13px;color:#666688;text-align:center;line-height:1.5}
 #nameInput{width:100%;max-width:300px;background:#1a1a28;border:2px solid rgba(123,47,255,.4);border-radius:14px;padding:14px 18px;font-size:17px;color:#fff;outline:none;transition:border-color .2s;text-align:center;-webkit-appearance:none}
 #nameInput:focus{border-color:#7B2FFF}
 #nameInput::placeholder{color:#444466}
-#nameSubmit{width:100%;max-width:300px;background:linear-gradient(135deg,#7B2FFF,#FF2F7B);border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 4px 20px rgba(123,47,255,.4);-webkit-appearance:none;transition:transform .1s}
+#nameSubmit{width:100%;max-width:300px;background:linear-gradient(135deg,#7B2FFF,#FF2F7B);border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;-webkit-appearance:none;transition:transform .1s}
 #nameSubmit:active{transform:scale(.96)}
-
-/* Основной экран */
 .wrap{display:flex;flex-direction:column;align-items:center;padding:16px 14px 28px;max-width:420px;margin:0 auto;gap:8px}
-h1{font-size:22px;font-weight:900;text-align:center;line-height:1.2;background:linear-gradient(135deg,#FFD700,#FFA500,#FF2F7B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
+h1{font-size:22px;font-weight:900;text-align:center;line-height:1.2;letter-spacing:-.5px;background:linear-gradient(135deg,#FFD700,#FFA500,#FF2F7B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .sub{font-size:10px;color:#555577;letter-spacing:.5px;text-align:center}
-
-/* Колесо — компактнее */
 .wheel-wrap{position:relative;width:min(270px,82vw);height:min(270px,82vw);flex-shrink:0}
 #wcanvas{width:100%;height:100%;border-radius:50%;display:block;-webkit-transform:translateZ(0);transform:translateZ(0)}
 .arrow{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:20px solid #FFD700;filter:drop-shadow(0 0 5px rgba(255,215,0,.9));z-index:5}
@@ -33,27 +27,21 @@ h1{font-size:22px;font-weight:900;text-align:center;line-height:1.2;background:l
 .spin-btn:disabled{opacity:.4;cursor:default}
 .spin-btn .ico{font-size:18px;line-height:1}
 .spin-btn .lbl{font-size:7px;font-weight:700;color:#fff;letter-spacing:.5px}
-
 .cd{font-size:11px;color:#555577;text-align:center;height:15px;font-weight:600}
 .cd.on{color:#FFD700}
-
-/* Результат */
 .res{width:100%;background:#12121a;border:1px solid rgba(123,47,255,.35);border-radius:13px;padding:11px 14px;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
 .res .lbl{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#555577}
 .res .txt{font-size:14px;font-weight:600;text-align:center;line-height:1.4}
 .res .txt.win{color:#FFD700;font-weight:800}
-
-/* Счёт + имя в одной строке */
 .info-row{width:100%;display:flex;gap:8px}
-.score{flex:1;background:rgba(123,47,255,.12);border:1px solid rgba(123,47,255,.3);border-radius:12px;padding:10px 12px}
-.score .lbl{font-size:9px;color:#555577;text-transform:uppercase;letter-spacing:1px;margin-bottom:1px}
+.score{flex:1;background:rgba(123,47,255,.12);border:1px solid rgba(123,47,255,.3);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.score .lbl{font-size:9px;color:#555577;text-transform:uppercase;letter-spacing:1px}
 .score .val{font-size:18px;font-weight:900;color:#FFD700}
 .score .rval{font-size:13px;font-weight:700}
-.player-box{background:#12121a;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between}
-.player-box .pname{font-size:13px;font-weight:600;color:#e8e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100px}
-.player-box .change{font-size:10px;color:#7B2FFF;cursor:pointer;text-decoration:underline;margin-top:4px}
-
-/* Топ */
+.player-box{background:#12121a;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between;min-width:110px}
+.player-box .lbl{font-size:9px;color:#555577;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.player-box .pname{font-size:13px;font-weight:600;color:#e8e8f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px}
+.player-box .change{font-size:10px;color:#7B2FFF;cursor:pointer;text-decoration:underline;margin-top:6px}
 .top{width:100%}
 .top h2{font-size:12px;font-weight:800;margin-bottom:7px}
 .top-list{display:flex;flex-direction:column;gap:5px}
@@ -67,20 +55,17 @@ h1{font-size:22px;font-weight:900;text-align:center;line-height:1.2;background:l
 </head>
 <body>
 
-<!-- Экран имени -->
 <div id="nameScreen">
   <div style="font-size:52px">🎰</div>
   <h2>ЛОЛИ КАЗИК</h2>
-  <p>Введи имя для таблицы лидеров.<br>При следующем заходе спрашивать не будет.</p>
+  <p>Введи своё имя.<br>Больше спрашивать не будет.</p>
   <input id="nameInput" type="text" placeholder="Твоё имя..." maxlength="20" autocomplete="off" spellcheck="false">
   <button id="nameSubmit" onclick="submitName()">Играть 🎯</button>
 </div>
 
-<!-- Основной экран -->
 <div class="wrap" id="mainScreen" style="display:none">
   <h1>🎰 ЛОЛИ КАЗИК</h1>
   <div class="sub">крути — побеждай — соревнуйся</div>
-
   <div class="wheel-wrap">
     <div class="arrow"></div>
     <canvas id="wcanvas"></canvas>
@@ -88,28 +73,21 @@ h1{font-size:22px;font-weight:900;text-align:center;line-height:1.2;background:l
       <span class="ico">🎯</span><span class="lbl">КРУТИ</span>
     </button>
   </div>
-
   <div class="cd" id="cd"></div>
-
   <div class="res">
     <div class="lbl">твой приз</div>
     <div class="txt" id="resText">Нажми КРУТИ!</div>
   </div>
-
   <div class="info-row">
-    <div class="score" style="display:flex;flex-direction:column">
+    <div class="score">
       <div><div class="lbl">очки</div><div class="val" id="myScore">0</div></div>
-      <div style="margin-top:4px"><div class="lbl">кручений</div><div class="rval" id="mySpins">0</div></div>
+      <div><div class="lbl">кручений</div><div class="rval" id="mySpins">0</div></div>
     </div>
     <div class="player-box">
-      <div>
-        <div class="lbl" style="font-size:9px;color:#555577;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">игрок</div>
-        <div class="pname" id="playerName">—</div>
-      </div>
+      <div><div class="lbl">игрок</div><div class="pname" id="playerName">—</div></div>
       <div class="change" onclick="changeName()">сменить имя</div>
     </div>
   </div>
-
   <div class="top">
     <h2>🏆 Таблица лидеров</h2>
     <div class="top-list" id="topList"><div class="empty">Будь первым!</div></div>
@@ -117,109 +95,101 @@ h1{font-size:22px;font-weight:900;text-align:center;line-height:1.2;background:l
 </div>
 
 <script>
+// ── Telegram ──────────────────────────────────────────────────────────────
 const TG = window.Telegram?.WebApp;
 if(TG){TG.ready();TG.expand()}
-
-// Стабильный ID — приоритет: Telegram ID → сохранённый локальный
-const TG_UID = TG?.initDataUnsafe?.user?.id ? String(TG.initDataUnsafe.user.id) : null;
+const TG_UID  = TG?.initDataUnsafe?.user?.id  ? String(TG.initDataUnsafe.user.id)  : '';
 const TG_NAME = TG?.initDataUnsafe?.user?.first_name || '';
 
-let UID = '', UNAME = '';
+let UID='', UNAME='';
 
-// Ключи хранилища
-const KEY_NAME = 'kazik_name_v3';
-const KEY_UID  = 'kazik_uid_v3';
-
-// Универсальное хранилище: window.storage (Telegram) → localStorage → sessionStorage
-function lsGet(k){
-  try{if(localStorage.getItem(k))return localStorage.getItem(k)}catch{}
-  try{if(sessionStorage.getItem(k))return sessionStorage.getItem(k)}catch{}
-  return '';
+// ── Хранилище — только через куки (работают везде включая TG Mini App) ────
+function setCookie(k,v){
+  const exp = new Date(Date.now()+365*864e5).toUTCString();
+  // Пробуем с SameSite=None (HTTPS), потом без
+  try{document.cookie=`${k}=${encodeURIComponent(v)};expires=${exp};path=/;SameSite=None;Secure`}catch{}
+  try{document.cookie=`${k}=${encodeURIComponent(v)};expires=${exp};path=/`}catch{}
+  try{localStorage.setItem(k,v)}catch{} // дубль
 }
-function lsSet(k,v){
-  try{localStorage.setItem(k,v)}catch{}
-  try{sessionStorage.setItem(k,v)}catch{}
-}
-
-// window.storage (Telegram Mini App) — асинхронное
-async function wsGet(k){
-  try{if(window.storage){const r=await window.storage.get(k);return r?r.value:null}}catch{}
-  return null;
-}
-async function wsSet(k,v){
-  try{if(window.storage)await window.storage.set(k,v)}catch{}
+function getCookie(k){
+  try{
+    const found=document.cookie.split(';').find(c=>c.trim().startsWith(k+'='));
+    if(found) return decodeURIComponent(found.trim().slice(k.length+1));
+    // fallback localStorage
+    return localStorage.getItem(k)||'';
+  }catch{return''}
 }
 
-async function initUser(){
-  // UID
+// ── Инициализация пользователя ────────────────────────────────────────────
+function initUser(){
+  // Определяем UID
   if(TG_UID){
     UID = TG_UID;
   } else {
-    UID = lsGet(KEY_UID) || ('u_'+Math.random().toString(36).slice(2,10));
-    lsSet(KEY_UID, UID);
+    UID = getCookie('kz_uid') || 'u_'+Math.random().toString(36).slice(2,10);
+    setCookie('kz_uid', UID);
   }
 
-  // Ищем имя: сначала window.storage (Telegram), потом localStorage
-  let savedName = await wsGet('kazik_name_'+UID);
-  if(!savedName) savedName = lsGet(KEY_NAME+'_'+UID);
-
-  if(savedName){
-    UNAME = savedName;
-    showMain();
-  } else if(TG_NAME){
-    // Если есть имя из Telegram — сохраняем сразу без вопроса
+  // Имя из Telegram — берём сразу, не спрашиваем
+  if(TG_NAME){
     UNAME = TG_NAME;
-    await wsSet('kazik_name_'+UID, UNAME);
-    lsSet(KEY_NAME+'_'+UID, UNAME);
+    setCookie('kz_name_'+UID, UNAME); // сохраняем на всякий
+    showMain();
+    return;
+  }
+
+  // Сохранённое имя
+  const saved = getCookie('kz_name_'+UID);
+  if(saved){
+    UNAME = saved;
     showMain();
   } else {
-    document.getElementById('nameScreen').style.display = 'flex';
+    document.getElementById('nameScreen').style.display='flex';
   }
 }
 
-async function submitName(){
-  const inp = document.getElementById('nameInput');
-  const name = inp.value.trim().slice(0,20);
+function submitName(){
+  const inp=document.getElementById('nameInput');
+  const name=inp.value.trim().slice(0,20);
   if(!name){inp.style.borderColor='#FF2F7B';setTimeout(()=>inp.style.borderColor='rgba(123,47,255,.4)',700);return}
-  UNAME = name;
-  // Сохраняем везде
-  await wsSet('kazik_name_'+UID, UNAME);
-  lsSet(KEY_NAME+'_'+UID, UNAME);
-  document.getElementById('nameScreen').style.display = 'none';
+  UNAME=name;
+  setCookie('kz_name_'+UID, UNAME);
+  document.getElementById('nameScreen').style.display='none';
   showMain();
 }
 
 function changeName(){
-  document.getElementById('nameInput').value = UNAME;
-  document.getElementById('nameScreen').style.display = 'flex';
+  document.getElementById('nameInput').value=UNAME;
+  document.getElementById('nameScreen').style.display='flex';
   setTimeout(()=>document.getElementById('nameInput').focus(),100);
 }
 
 function showMain(){
-  document.getElementById('mainScreen').style.display = 'flex';
-  document.getElementById('playerName').textContent = UNAME;
-  setTimeout(resize, 50);
-  loadMe().then(()=>{updCD();renderLB();if(!canSpin()){const iv=setInterval(()=>{updCD();if(canSpin())clearInterval(iv)},500)}});
+  document.getElementById('mainScreen').style.display='flex';
+  document.getElementById('playerName').textContent=UNAME;
+  setTimeout(resize,50);
+  loadMe();
+  renderLB();
 }
 
 document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')submitName()});
 
 // ── Сегменты ──────────────────────────────────────────────────────────────
-const SEG = [
-  {t:'ДЖЕКПОТ', e:'💎', p:1000, c:'#5515C5', w:0.5},
-  {t:'Оружие',  e:'⚔',  p:200,  c:'#B5154F', w:2},
-  {t:'Золото',  e:'🪙',  p:150,  c:'#B87500', w:2},
-  {t:'Ничего',  e:'💀',  p:0,    c:'#151525', w:1.5},
-  {t:'Зелье',   e:'🧪',  p:100,  c:'#0E9050', w:2.5},
-  {t:'Огонь',   e:'🔥',  p:50,   c:'#B03808', w:3},
-  {t:'Ничего',  e:'💀',  p:0,    c:'#151525', w:1.5},
-  {t:'Щит',     e:'🛡',  p:120,  c:'#0E48B0', w:2.5},
-  {t:'Звезда',  e:'⭐',  p:300,  c:'#B08000', w:1.5},
-  {t:'Ничего',  e:'💀',  p:0,    c:'#151525', w:1.5},
-  {t:'Меч',     e:'🗡',  p:80,   c:'#981038', w:2.5},
-  {t:'Магия',   e:'🪄',  p:250,  c:'#780EB8', w:1.5},
+const SEG=[
+  {t:'ДЖЕКПОТ',e:'💎',p:1000,c:'#5515C5',w:0.5},
+  {t:'Оружие', e:'⚔', p:200, c:'#B5154F',w:2},
+  {t:'Золото',e:'🪙', p:150, c:'#B87500',w:2},
+  {t:'Ничего', e:'💀',p:0,   c:'#151525',w:1.5},
+  {t:'Зелье',  e:'🧪',p:100, c:'#0E9050',w:2.5},
+  {t:'Огонь',  e:'🔥',p:50,  c:'#B03808',w:3},
+  {t:'Ничего', e:'💀',p:0,   c:'#151525',w:1.5},
+  {t:'Щит',    e:'🛡', p:120, c:'#0E48B0',w:2.5},
+  {t:'Звезда', e:'⭐',p:300, c:'#B08000',w:1.5},
+  {t:'Ничего', e:'💀',p:0,   c:'#151525',w:1.5},
+  {t:'Меч',    e:'🗡', p:80,  c:'#981038',w:2.5},
+  {t:'Магия',  e:'🪄',p:250, c:'#780EB8',w:1.5},
 ];
-const N=SEG.length, ARC=2*Math.PI/N, COOL=5000;
+const N=SEG.length,ARC=2*Math.PI/N,COOL=5000,DAILY_LIMIT=10;
 
 // ── Canvas ────────────────────────────────────────────────────────────────
 const cv=document.getElementById('wcanvas');
@@ -244,91 +214,59 @@ function lighten(hex,a){
 function draw(angle){
   const cx=sz/2,cy=sz/2,R=sz/2-5;
   ctx.clearRect(0,0,sz,sz);
-
   for(let i=0;i<N;i++){
-    const s=SEG[i];
-    const a0=angle+i*ARC,a1=a0+ARC;
-
-    // Сектор
+    const s=SEG[i],a0=angle+i*ARC,a1=a0+ARC;
     ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0,a1);ctx.closePath();
     const gr=ctx.createRadialGradient(cx,cy,R*.15,cx,cy,R);
     gr.addColorStop(0,lighten(s.c,60));gr.addColorStop(1,s.c);
     ctx.fillStyle=gr;ctx.fill();
     ctx.strokeStyle='rgba(0,0,0,.45)';ctx.lineWidth=1.5;ctx.stroke();
 
-    // Текст — антифлип для левой половины
     const mid=angle+i*ARC+ARC/2;
     const norm=((mid%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
     const flip=norm>Math.PI*.5&&norm<Math.PI*1.5;
-
-    ctx.save();ctx.translate(cx,cy);
-    ctx.rotate(flip ? mid+Math.PI : mid);
-    const dir=flip?-1:1;
-
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(flip?mid+Math.PI:mid);
+    const d=flip?-1:1;
     ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.shadowColor='rgba(0,0,0,.95)';ctx.shadowBlur=5;
-
-    // Название
     ctx.fillStyle='#fff';
     ctx.font=`bold ${sz<240?9:10}px -apple-system,Arial,sans-serif`;
-    ctx.fillText(s.t, dir*R*.68, -5);
-
-    // Очки
-    if(s.p>0){
-      ctx.fillStyle='#FFE000';
-      ctx.font=`bold ${sz<240?8:9}px -apple-system,Arial,sans-serif`;
-      ctx.fillText('+'+s.p, dir*R*.68, 7);
-    }
-
-    // Эмодзи
-    ctx.shadowBlur=0;
-    ctx.font=`${sz<240?10:12}px -apple-system,Arial,sans-serif`;
-    ctx.fillStyle='#fff';
-    ctx.fillText(s.e, dir*R*.44, 1);
-
+    ctx.fillText(s.t,d*R*.68,-5);
+    if(s.p>0){ctx.fillStyle='#FFE000';ctx.font=`bold ${sz<240?8:9}px -apple-system,Arial,sans-serif`;ctx.fillText('+'+s.p,d*R*.68,7)}
+    ctx.shadowBlur=0;ctx.font=`${sz<240?11:13}px -apple-system,Arial,sans-serif`;ctx.fillStyle='#fff';
+    ctx.fillText(s.e,d*R*.44,1);
     ctx.restore();
   }
-
-  // Рамка
   ctx.beginPath();ctx.arc(cx,cy,R+2,0,2*Math.PI);
   const bg=ctx.createLinearGradient(0,0,sz,sz);
   bg.addColorStop(0,'#7B2FFF');bg.addColorStop(.5,'#FFD700');bg.addColorStop(1,'#FF2F7B');
   ctx.strokeStyle=bg;ctx.lineWidth=4;ctx.stroke();
-
-  // Центр
   ctx.beginPath();ctx.arc(cx,cy,32,0,2*Math.PI);
   ctx.fillStyle='#0a0a0f';ctx.fill();
   ctx.strokeStyle='rgba(123,47,255,.6)';ctx.lineWidth=2;ctx.stroke();
 }
 
-// ── Хранилище ─────────────────────────────────────────────────────────────
-async function sGet(k,shared=false){
-  try{
-    if(window.storage){const r=await window.storage.get(k,shared);return r?JSON.parse(r.value):null}
-    const v=localStorage.getItem(k);return v?JSON.parse(v):null;
-  }catch{return null}
-}
-async function sSet(k,v,shared=false){
-  try{
-    if(window.storage)await window.storage.set(k,JSON.stringify(v),shared);
-    else localStorage.setItem(k,JSON.stringify(v));
-  }catch{}
-}
-
-// ── Данные игрока ─────────────────────────────────────────────────────────
+// ── Данные (localStorage) ─────────────────────────────────────────────────
 let me={score:0,spins:0,lastSpin:0,lastPrize:''};
-async function loadMe(){const d=await sGet('wm3_'+UID);if(d)me=d;updUI()}
-async function saveMe(){await sSet('wm3_'+UID,me)}
+function loadMe(){
+  try{const d=localStorage.getItem('kzme_'+UID);if(d)me=JSON.parse(d)}catch{}
+  updUI();
+  updCD();
+  if(!canSpin()){const iv=setInterval(()=>{updCD();if(canSpin())clearInterval(iv)},500)}
+}
+function saveMe(){
+  try{localStorage.setItem('kzme_'+UID,JSON.stringify(me))}catch{}
+}
 function updUI(){
   document.getElementById('myScore').textContent=me.score.toLocaleString();
   document.getElementById('mySpins').textContent=me.spins;
 }
 
-// ── Лидерборд ─────────────────────────────────────────────────────────────
-async function getLB(){return(await sGet('wlb4',true))||{}}
-async function setLB(lb){await sSet('wlb4',lb,true)}
-async function renderLB(){
-  const lb=await getLB();
+// ── Лидерборд (localStorage — общий ключ) ────────────────────────────────
+function getLB(){try{return JSON.parse(localStorage.getItem('kzlb5')||'{}')}catch{return{}}}
+function setLB(lb){try{localStorage.setItem('kzlb5',JSON.stringify(lb))}catch{}}
+function renderLB(){
+  const lb=getLB();
   const sorted=Object.entries(lb).map(([id,d])=>({id,...d})).sort((a,b)=>b.score-a.score).slice(0,10);
   const el=document.getElementById('topList');
   if(!sorted.length){el.innerHTML='<div class="empty">Будь первым!</div>';return}
@@ -343,78 +281,67 @@ async function renderLB(){
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
 // ── Кулдаун ───────────────────────────────────────────────────────────────
-function canSpin(){return Date.now()-me.lastSpin>=COOL}
+function todaySpins(){
+  const today=new Date().toDateString();
+  if(me.lastSpinDay!==today) return 0;
+  return me.todaySpins||0;
+}
+function canSpin(){return Date.now()-me.lastSpin>=COOL && todaySpins()<DAILY_LIMIT}
 function updCD(){
   const el=document.getElementById('cd'),btn=document.getElementById('spinBtn');
-  if(canSpin()){el.textContent='';el.className='cd';btn.disabled=false;return}
+  const ts=todaySpins();
+  if(ts>=DAILY_LIMIT){
+    el.textContent=`🚫 Лимит ${DAILY_LIMIT} круток на сегодня исчерпан`;
+    el.className='cd on';btn.disabled=true;return;
+  }
+  if(canSpin()){
+    el.textContent=`Осталось круток сегодня: ${DAILY_LIMIT-ts}`;
+    el.className='cd';btn.disabled=false;return;
+  }
   const l=Math.ceil((COOL-(Date.now()-me.lastSpin))/1000);
-  el.textContent=`⏳ подожди ${l}с`;el.className='cd on';btn.disabled=true;
+  el.textContent=`⏳ подожди ${l}с (осталось ${DAILY_LIMIT-ts} круток)`;
+  el.className='cd on';btn.disabled=true;
 }
 
 // ── Спин ──────────────────────────────────────────────────────────────────
 let rot=0,spinning=false;
-
 function doSpin(){
   if(spinning||!canSpin())return;
   spinning=true;
   document.getElementById('spinBtn').disabled=true;
   document.getElementById('resText').textContent='🎲 Крутится...';
   document.getElementById('resText').className='txt';
-
   const tot=SEG.reduce((a,s)=>a+s.w,0);
   let r=Math.random()*tot,winner=0;
   for(let i=0;i<N;i++){r-=SEG[i].w;if(r<=0){winner=i;break}}
-
   const extra=(6+Math.floor(Math.random()*4))*2*Math.PI;
-  const arrowAngle=-Math.PI/2;
-  const segMid=winner*ARC+ARC/2;
-  const base=arrowAngle-segMid;
-  const diff=((base-rot)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+  const diff=((-Math.PI/2-(winner*ARC+ARC/2)-rot)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
   const target=rot+extra+diff;
-
-  const dur=5500+Math.random()*1500;
-  const t0=performance.now(),r0=rot;
-
-  function ease(t){
-    if(t<0.15)return t*t*4.4;
-    if(t<0.65)return 0.1+(t-0.15)*(0.8/0.5);
-    return 0.9+0.1*(1-Math.pow((1-t)/0.35,2.5));
-  }
-
+  const dur=5500+Math.random()*1500,t0=performance.now(),r0=rot;
+  function ease(t){if(t<.15)return t*t*4.4;if(t<.65)return .1+(t-.15)*(0.8/.5);return .9+.1*(1-Math.pow((1-t)/.35,2.5))}
   function frame(now){
-    const t=Math.min((now-t0)/dur,1);
-    rot=r0+(target-r0)*ease(t);
-    draw(rot);
-    if(t<1){requestAnimationFrame(frame)}
-    else{rot=rot%(2*Math.PI);draw(rot);finish(winner)}
+    const t=Math.min((now-t0)/dur,1);rot=r0+(target-r0)*ease(t);draw(rot);
+    if(t<1)requestAnimationFrame(frame);else{rot=rot%(2*Math.PI);draw(rot);finish(winner)}
   }
   requestAnimationFrame(frame);
 }
 
-async function finish(winner){
+function finish(winner){
   spinning=false;
   const s=SEG[winner];
   me.score+=s.p;me.spins++;me.lastSpin=Date.now();me.lastPrize=s.e+' '+s.t;
-  await saveMe();
-
-  // Обновляем лидерборд — по UID, имя актуальное
-  const lb=await getLB();
-  lb[UID]={name:UNAME,score:me.score,spins:me.spins,lastPrize:me.lastPrize};
-  await setLB(lb);
-
+  const today=new Date().toDateString();
+  if(me.lastSpinDay!==today){me.todaySpins=1;me.lastSpinDay=today;}
+  else me.todaySpins=(me.todaySpins||0)+1;
+  saveMe();
+  const lb=getLB();
+  lb[UID]={name:UNAME,score:me.score,spins:me.spins};
+  setLB(lb);
   const rt=document.getElementById('resText');
-  if(s.p>0){
-    rt.innerHTML=`${s.e} <strong>${s.t}</strong> +${s.p} очков`;
-    rt.className='txt win';
-    TG?.HapticFeedback?.impactOccurred?.('heavy');
-  }else{
-    rt.textContent='💀 Ничего... ещё раз!';
-    rt.className='txt';
-    TG?.HapticFeedback?.notificationOccurred?.('error');
-  }
-  updUI();await renderLB();
-  const iv=setInterval(()=>{updCD();if(canSpin())clearInterval(iv)},500);
-  updCD();
+  if(s.p>0){rt.innerHTML=`${s.e} <strong>${s.t}</strong> +${s.p} очков`;rt.className='txt win';TG?.HapticFeedback?.impactOccurred?.('heavy')}
+  else{rt.textContent='💀 Ничего... ещё раз!';rt.className='txt';TG?.HapticFeedback?.notificationOccurred?.('error')}
+  updUI();renderLB();
+  const iv=setInterval(()=>{updCD();if(canSpin())clearInterval(iv)},500);updCD();
 }
 
 window.addEventListener('resize',()=>{if(document.getElementById('mainScreen').style.display!=='none')resize()});
