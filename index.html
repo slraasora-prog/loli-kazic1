@@ -97,8 +97,9 @@ h1{font-size:22px;font-weight:900;text-align:center;line-height:1.2;letter-spaci
       </button>
     </div>
     <div class="cd" id="cd"></div>
+    <div id="bonusBar" style="display:none;width:100%;display:flex;gap:6px;flex-wrap:wrap;justify-content:center"></div>
     <div class="res">
-      <div class="lbl">твой приз</div>
+      <div class="lbl">что получил</div>
       <div class="txt" id="resText">Нажми КРУТИ!</div>
     </div>
     <div class="info-row">
@@ -194,15 +195,24 @@ const N=SEG.length, ARC=2*Math.PI/N, COOL=5000, DAILY_LIMIT=10;
 
 // ── Магазин ───────────────────────────────────────────────────────────────
 const SHOP = [
-  {id:'s1', name:'+5 круток',   desc:'Добавляет 5 круток сегодня',  price:500,  spins:5,  ico:'🎰'},
-  {id:'s2', name:'+15 круток',  desc:'Добавляет 15 круток сегодня', price:1000,  spins:15, ico:'🎪'},
-  {id:'s3', name:'+50 круток',  desc:'Большой запас на сегодня',    price:3000, spins:50, ico:'🏆'},
+  // Крутки
+  {id:'s1', name:'+3 крутки',    desc:'Небольшая добавка на сегодня',   price:600,  spins:3,  ico:'🎰', type:'spins'},
+  {id:'s2', name:'+10 круток',   desc:'Хороший запас на вечер',         price:1000,  spins:10, ico:'🎪', type:'spins'},
+  {id:'s3', name:'+30 круток',   desc:'Крути весь день без остановки',  price:2400, spins:30, ico:'🎡', type:'spins'},
+  {id:'s4', name:'+100 круток',  desc:'Безлимит на целый день',         price:7000, spins:100,ico:'👑', type:'spins'},
+  // Удача
+  {id:'s5', name:'🍀 Удача x2',  desc:'Следующие 3 кручения — двойные очки', price:500, luck:3, ico:'🍀', type:'luck'},
+  {id:'s6', name:'🛡️ Защита',    desc:'Следующий "Ничего" даст 100 очков',   price:2
+150, shield:1,ico:'🛡️', type:'shield'},
+  {id:'s7', name:'⚡ Суперудача', desc:'Следующее кручение — гарантированный приз (не Ничего)', price:800, superSpin:1, ico:'⚡', type:'super'},
 ];
 
 function renderShop(){
   const grid = document.getElementById('shopGrid');
-  grid.innerHTML = SHOP.map(item=>`
-    <div class="shop-item">
+  const spins = SHOP.filter(s=>s.type==='spins');
+  const bonus = SHOP.filter(s=>s.type!=='spins');
+  function itemHtml(item){
+    return `<div class="shop-item">
       <div class="ico">${item.ico}</div>
       <div class="info">
         <div class="name">${item.name}</div>
@@ -210,8 +220,13 @@ function renderShop(){
         <div class="price">💰 ${item.price} очков</div>
       </div>
       <button class="buy-btn" id="buy_${item.id}" onclick="buyItem('${item.id}')">Купить</button>
-    </div>
-  `).join('');
+    </div>`;
+  }
+  grid.innerHTML =
+    '<div style="font-size:11px;font-weight:700;color:#7B2FFF;letter-spacing:1px;align-self:flex-start">🎰 КРУТКИ</div>' +
+    spins.map(itemHtml).join('') +
+    '<div style="font-size:11px;font-weight:700;color:#FF2F7B;letter-spacing:1px;align-self:flex-start;margin-top:4px">✨ БОНУСЫ</div>' +
+    bonus.map(itemHtml).join('');
   updateShopBtns();
 }
 
@@ -254,13 +269,24 @@ function buyItem(id){
     `Потратить ${item.price} очков?\nТекущий баланс: ${me.score} очков.`,
     ()=>{
       me.score -= item.price;
-      me.bonusSpins = (me.bonusSpins||0) + item.spins;
+      if(item.type==='spins'){
+        me.bonusSpins = (me.bonusSpins||0) + item.spins;
+        showToast('✅ +' + item.spins + ' круток добавлено!');
+      } else if(item.type==='luck'){
+        me.luckSpins = (me.luckSpins||0) + item.luck;
+        showToast('✅ 🍀 Удача x2 на ' + item.luck + ' кручения!');
+      } else if(item.type==='shield'){
+        me.shield = (me.shield||0) + 1;
+        showToast('✅ 🛡️ Защита активирована!');
+      } else if(item.type==='super'){
+        me.superSpin = (me.superSpin||0) + 1;
+        showToast('✅ ⚡ Суперудача готова!');
+      }
       saveMe();
       updUI();
       updateShopBtns();
       updCD();
       TG?.HapticFeedback?.notificationOccurred?.('success');
-      showToast('✅ Куплено! +' + item.spins + ' круток');
     }
   );
 }
@@ -331,6 +357,18 @@ function saveMe(){lsSet('kzme_'+UID,JSON.stringify(me))}
 function updUI(){
   document.getElementById('myScore').textContent=me.score.toLocaleString();
   document.getElementById('mySpins').textContent=me.spins;
+  // Бонус бар
+  const bar=document.getElementById('bonusBar');
+  const badges=[];
+  if(me.luckSpins>0) badges.push(`🍀x${me.luckSpins}`);
+  if(me.shield>0) badges.push(`🛡️x${me.shield}`);
+  if(me.superSpin>0) badges.push(`⚡x${me.superSpin}`);
+  if(badges.length){
+    bar.style.display='flex';
+    bar.innerHTML=badges.map(b=>`<span style="background:rgba(123,47,255,.2);border:1px solid rgba(123,47,255,.4);border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700">${b}</span>`).join('');
+  } else {
+    bar.style.display='none';
+  }
 }
 
 // ── Лидерборд ─────────────────────────────────────────────────────────────
@@ -405,7 +443,23 @@ function doSpin(){
 function finish(winner){
   spinning=false;
   const s=SEG[winner];
-  me.score+=s.p; me.spins++;
+  // Применяем бонусы
+  let pts = s.p;
+  // Суперспин — пропускаем Ничего
+  if(me.superSpin>0 && s.p===0){
+    me.superSpin--;
+    // Выбираем случайный не-нулевой приз
+    const nonZero = SEG.filter(x=>x.p>0);
+    const reSeg = nonZero[Math.floor(Math.random()*nonZero.length)];
+    pts = reSeg.p;
+    document.getElementById('resText').innerHTML = `⚡ СУПЕРУДАЧА! ${reSeg.e} <strong>${reSeg.t}</strong> +${pts}`;
+    document.getElementById('resText').className='txt win';
+  }
+  // Защита от нуля
+  if(pts===0 && me.shield>0){pts=30;me.shield--;}
+  // Удача x2
+  if(me.luckSpins>0){pts*=2;me.luckSpins--;}
+  me.score+=pts; me.spins++;
   me.lastSpin=Date.now(); me.lastPrize=s.e+' '+s.t;
   // Дневной счётчик
   if(me.lastDay!==todayStr()){me.todaySpins=1;me.lastDay=todayStr();me.bonusSpins=0;}
