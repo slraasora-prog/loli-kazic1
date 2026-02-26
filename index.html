@@ -343,27 +343,20 @@ function updUI(){
   bar.innerHTML=badges.map(b=>`<span class="bonus-badge">${b}</span>`).join('');
 }
 
-// ── Лидерборд (JSONBin) ───────────────────────────────────────────────────
+// ── Лидерборд (JSONBin — общий для всех) ────────────────────────────────
 const JSONBIN_KEY='$2a$10$m3p3hg/IMQy5gxBoGKqKwuFiMPqWRFTT97YUTpxkQ86ShLtGecnRO';
+const BIN_ID='699ff5b2ae596e708f4b30f7';
 const JSONBIN_URL='https://api.jsonbin.io/v3/b';
-let BIN_ID=lsGet('kz_bin_id')||'';
 
 async function getLB(){
   try{
-    if(!BIN_ID)return{};
     const r=await fetch(JSONBIN_URL+'/'+BIN_ID+'/latest',{headers:{'X-Master-Key':JSONBIN_KEY}});
     const d=await r.json();return d.record||{};
   }catch{return{}}
 }
 async function setLB(lb){
   try{
-    if(!BIN_ID){
-      const r=await fetch(JSONBIN_URL,{method:'POST',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY,'X-Bin-Name':'kazik-lb'},body:JSON.stringify(lb)});
-      const d=await r.json();BIN_ID=d.metadata?.id||'';
-      if(BIN_ID)lsSet('kz_bin_id',BIN_ID);
-    }else{
-      await fetch(JSONBIN_URL+'/'+BIN_ID,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify(lb)});
-    }
+    await fetch(JSONBIN_URL+'/'+BIN_ID,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify(lb)});
   }catch(e){console.log('LB err',e)}
 }
 async function renderLB(){
