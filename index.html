@@ -343,13 +343,34 @@ function updUI(){
   bar.innerHTML=badges.map(b=>`<span class="bonus-badge">${b}</span>`).join('');
 }
 
-// ── Лидерборд ─────────────────────────────────────────────────────────────
-function getLB(){try{return JSON.parse(lsGet('kzlb7'))||{}}catch{return{}}}
-function setLB(lb){lsSet('kzlb7',JSON.stringify(lb))}
-function renderLB(){
-  const lb=getLB();
-  const sorted=Object.entries(lb).map(([id,d])=>({id,...d})).sort((a,b)=>b.score-a.score).slice(0,10);
+// ── Лидерборд (JSONBin) ───────────────────────────────────────────────────
+const JSONBIN_KEY='$2a$10$m3p3hg/IMQy5gxBoGKqKwuFiMPqWRFTT97YUTpxkQ86ShLtGecnRO';
+const JSONBIN_URL='https://api.jsonbin.io/v3/b';
+let BIN_ID=lsGet('kz_bin_id')||'';
+
+async function getLB(){
+  try{
+    if(!BIN_ID)return{};
+    const r=await fetch(JSONBIN_URL+'/'+BIN_ID+'/latest',{headers:{'X-Master-Key':JSONBIN_KEY}});
+    const d=await r.json();return d.record||{};
+  }catch{return{}}
+}
+async function setLB(lb){
+  try{
+    if(!BIN_ID){
+      const r=await fetch(JSONBIN_URL,{method:'POST',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY,'X-Bin-Name':'kazik-lb'},body:JSON.stringify(lb)});
+      const d=await r.json();BIN_ID=d.metadata?.id||'';
+      if(BIN_ID)lsSet('kz_bin_id',BIN_ID);
+    }else{
+      await fetch(JSONBIN_URL+'/'+BIN_ID,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify(lb)});
+    }
+  }catch(e){console.log('LB err',e)}
+}
+async function renderLB(){
   const el=document.getElementById('topList');
+  el.innerHTML='<div class="empty">Загрузка...</div>';
+  const lb=await getLB();
+  const sorted=Object.entries(lb).map(([id,d])=>({id,...d})).sort((a,b)=>b.score-a.score).slice(0,10);
   if(!sorted.length){el.innerHTML='<div class="empty">Будь первым!</div>';return}
   const em=['🥇','🥈','🥉'];
   el.innerHTML=sorted.map((p,i)=>`<div class="ti${p.id===UID?' me':''}">
@@ -415,7 +436,7 @@ function finish(winner){
   if(me.lastDay!==todayStr()){me.todaySpins=1;me.lastDay=todayStr();me.bonusSpins=0;}
   else me.todaySpins=(me.todaySpins||0)+1;
   saveMe();
-  const lb=getLB();lb[UID]={name:UNAME,score:me.score,spins:me.spins};setLB(lb);
+  getLB().then(lb=>{lb[UID]={name:UNAME,score:me.score,spins:me.spins};setLB(lb);});
   const rt=document.getElementById('resText');
   if(pts>0){
     rt.innerHTML=s.e+' <strong>'+s.t+'</strong> +'+pts+(me.luckSpins>=0&&pts!==s.p?' 🍀x2':'');
