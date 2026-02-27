@@ -344,33 +344,33 @@ function updUI(){
 }
 
 // ── Лидерборд (JSONBin — общий для всех) ────────────────────────────────
-const JSONBIN_KEY='$2a$10$m3p3hg/IMQy5gxBoGKqKwuFiMPqWRFTT97YUTpxkQ86ShLtGecnRO';
-const BIN_ID='699ff5b2ae596e708f4b30f7';
-const JSONBIN_URL='https://api.jsonbin.io/v3/b';
+const SB_URL='https://xgxaxaouczyrmufwybpi.supabase.co';
+const SB_KEY='sb_publishable_kZo1WQQ3sU_mgfUa2bYc8Q_kd76vVhD';
+const SB_H={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
 
-async function getLB(){
+async function setLB(data){
   try{
-    const r=await fetch(JSONBIN_URL+'/'+BIN_ID+'/latest',{headers:{'X-Master-Key':JSONBIN_KEY}});
-    const d=await r.json();return d.record||{};
-  }catch{return{}}
-}
-async function setLB(lb){
-  try{
-    await fetch(JSONBIN_URL+'/'+BIN_ID,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify(lb)});
-  }catch(e){console.log('LB err',e)}
+    await fetch(SB_URL+'/rest/v1/leaderboard?on_conflict=user_id',{
+      method:'POST',
+      headers:{...SB_H,'Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify({user_id:data.id,name:data.name,score:data.score,spins:data.spins})
+    });
+  }catch(e){console.log('SB err',e)}
 }
 async function renderLB(){
   const el=document.getElementById('topList');
   el.innerHTML='<div class="empty">Загрузка...</div>';
-  const lb=await getLB();
-  const sorted=Object.entries(lb).map(([id,d])=>({id,...d})).sort((a,b)=>b.score-a.score).slice(0,10);
-  if(!sorted.length){el.innerHTML='<div class="empty">Будь первым!</div>';return}
-  const em=['🥇','🥈','🥉'];
-  el.innerHTML=sorted.map((p,i)=>`<div class="ti${p.id===UID?' me':''}">
-    <div class="rk">${em[i]||i+1}</div>
-    <div class="nm">${esc(p.name)}${p.id===UID?' 👈':''}</div>
-    <div class="sc">${p.score.toLocaleString()}</div>
-  </div>`).join('');
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/leaderboard?select=*&order=score.desc&limit=10',{headers:SB_H});
+    const rows=await r.json();
+    if(!rows||!rows.length){el.innerHTML='<div class="empty">Будь первым!</div>';return}
+    const em=['🥇','🥈','🥉'];
+    el.innerHTML=rows.map((p,i)=>`<div class="ti${p.user_id===UID?' me':''}">
+      <div class="rk">${em[i]||i+1}</div>
+      <div class="nm">${esc(p.name)}${p.user_id===UID?' 👈':''}</div>
+      <div class="sc">${p.score.toLocaleString()}</div>
+    </div>`).join('');
+  }catch(e){el.innerHTML='<div class="empty">Ошибка загрузки</div>';}
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
@@ -429,7 +429,7 @@ function finish(winner){
   if(me.lastDay!==todayStr()){me.todaySpins=1;me.lastDay=todayStr();me.bonusSpins=0;}
   else me.todaySpins=(me.todaySpins||0)+1;
   saveMe();
-  getLB().then(lb=>{lb[UID]={name:UNAME,score:me.score,spins:me.spins};setLB(lb);});
+  setLB({id:UID,name:UNAME,score:me.score,spins:me.spins});
   const rt=document.getElementById('resText');
   if(pts>0){
     rt.innerHTML=s.e+' <strong>'+s.t+'</strong> +'+pts+(me.luckSpins>=0&&pts!==s.p?' 🍀x2':'');
